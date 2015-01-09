@@ -12,10 +12,9 @@ table(yearmonth$month)
 barplot(table(yearmonth$month), main="month distribution of observations",
         xlab = "month", ylab ="observations count")
 
-# plot UTS distribution
+# plot UTS distribution       # where GROUPnew == 1 and UTS > 0
 uts1 <- tbl(db,sql("select UTS
            from dataset1
-           # where GROUPnew == 1 and UTS > 0
            "))
 
 uts_t <- collect(uts1)
