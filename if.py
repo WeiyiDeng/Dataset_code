@@ -51,13 +51,13 @@ print greater_less_equal_5(5)
 print greater_less_equal_5(6)    
 """    
 def gut_test():
-    print "Time for your gut test!"
+    print "Time for your gut check!"
     print "Do you choose left or right?"
     answer = raw_input("Type left or right and hit 'Enter'.").lower()
     if answer == "left" or answer == "l":
         print "HaHa"
     elif answer == "right" or answer == "r":
-        print "YOU LOSS"
+        print "YOU WUSS"
     else:
         print "You didn't pick left or right! Try again."
 gut_test()
