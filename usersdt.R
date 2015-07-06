@@ -5,7 +5,7 @@ weekcheck <- tbl(db,sql("select week
 
 weekout <- collect(weekcheck)
 hist(table(weekout))   # UTS -> weeks
-table(weekout)
+table(weekout)  # x axis is the number of weeks with how many observations
 
 ## select total number of listenings by each ID
 numrows_peruserID <- tbl(db,sql("select ID_USER, count(*)

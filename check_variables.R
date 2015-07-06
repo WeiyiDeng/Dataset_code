@@ -87,3 +87,32 @@ barplot(table(switchv), main = "number of band switches of each users each week 
         xlab = "number of switches", ylab ="number of users")
 # 1 is no switch here, could due to only have one listen this week
 #----------------------------------------------
+# trysample friends 500000, friendsample 519
+db_tbsample2 <- tbl(db, "trysample2")
+db_tbfsample <- tbl(db, "friendsample")
+
+
+userfsam <- tbl(db,sql("select ID_USER, count(distinct ID_FRIEND)
+           from friendsample
+           Group by ID_USER 
+           "))
+
+user_fri <- collect(userfsam)
+
+table(user_fri$count)
+
+singleSong <- tbl(db,sql(" SELECT S1.ID_USER, S1.weeknum, S1.ID_TRACK, S1.[persong]*1.0/S2.allSong
+FROM (select ID_USER, weeknum, ID_TRACK, count(*) as perSong
+from trysample2 
+group by ID_USER, weeknum, ID_TRACK) as S1,
+(select ID_USER, weeknum, count(*) as allSong
+from trysample2
+group by ID_USER, weeknum) as S2
+WHERE S1.ID_USER = S2.ID_USER and S1.weeknum = S2.weeknum and S1.ID_USER in (Select ID_USER from friendsample)
+           "))            # in fulll sample is select user ID where group = 1
+singles <- collect(singleSong)
+
+rate = singles[,4]
+table(rate)
+
+summary(rate)

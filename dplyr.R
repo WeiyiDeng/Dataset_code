@@ -46,6 +46,7 @@ barplot(table(M$AGE))
 str(mpg)
 data("mpg")
 summary(mpg)
+head(mpg)
 
 qplot(displ, hwy, data = mpg, col = drv)         # color according to variable drv     
 
