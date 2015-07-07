@@ -33,8 +33,14 @@ write.csv(file="bandlisten.csv", x=bandlis)
 newBands <- tbl(db,sql("SELECT *
 FROM bandlis
 WHERE ARTIST not in (select ARTIST
-from bandlis
-where FROM_UTS in (select FROM_UTS from weeky where Yearw = 1))
+                       from bandlis
+                       where FROM_UTS in (select FROM_UTS from weeky where Yearw = 1 or Yearw = 2)) and ARTIST not in (select ARTIST
+                       from (SELECT ARTIST, count(distinct USER) as num_user
+                       FROM (select USER, ARTIST
+                       from bandlis
+                       group by USER, ARTIST)
+                       GROUP BY ARTIST)
+                       where num_user <= 2)
            "))
 
 bandnew <- collect(newBands)
@@ -84,6 +90,60 @@ bandsadopt <- collect(bandAdoption)
 
 adoptijt <- bandsadopt[,3:5]
 
-write.csv(file="bandadoption.csv", x=adoptijt)
+# write.csv(file="bandadoption.csv", x=adoptijt)
 write.table(adoptijt, "bandadoptions.csv", row.names=F, col.names=F, sep=",")
 # use write.table to create csv file without column and row names 
+
+#
+splittime <- tbl(db,sql("select USER_ID, astart, midtime, aend
+from (SELECT End.USER as NAME, astart, astart+(aend-astart)/2 as midtime, aend 
+FROM (select USER, max(week_ID) as aend
+                        from newbandlis
+                        group by USER) as End, (select USER, min(week_ID) as astart
+                        from newbandlis
+                        group by USER) as Str
+                        WHERE End.USER = STR.USER) as Mid, userlist
+                        where userlist.USER = Mid.NAME
+           "))
+
+tsplit <- collect(splittime)
+
+write.table(tsplit, "tsplit.csv", row.names=F, col.names=F, sep=",")
+
+# band intro date
+introdate <- tbl(db,sql("SELECT BAND_ID, introdate
+FROM (select ARTIST, min(week_ID) as introdate
+from newbandlis
+group by ARTIST) as D, newbandlist
+WHERE D.ARTIST = newbandlist.ARTIST
+           "))
+
+startdate <- collect(introdate)
+
+write.table(startdate, "introdate.csv", row.names=F, col.names=F, sep=",")
+
+
+# for computing EA score
+adoptingweek <- tbl(db,sql("select USER_ID, mod_adoptions.BAND_ID, mod_adoptions.week_mod, introdate.week_mod as bandintro, peak.week_mod as bandpeak
+from mod_adoptions, peak, introdate
+where mod_adoptions.BAND_ID = peak.BAND_ID and mod_adoptions.BAND_ID = introdate.BAND_ID
+           "))
+
+adoptweek <- collect(adoptingweek)
+
+write.table(adoptweek, "adoptingweek.csv", row.names=F, col.names=F, sep=",")
+
+
+# 
+EAs <- read.csv("EAi.csv",header = FALSE)
+
+b <- quantile(EAs[,2], probs = seq(0, 1, 0.33))
+# quantile(EAs[,2], probs = c(0, 0.16, 0.84, 1))         # alternatively
+b <- quantile(EAs[,2], probs = c(0, 0.63, 0.84, 1))         # for now, otherwise breaks are not unique
+V3 = cut(EAs[,2], breaks=b, include.lowest = TRUE, right = FALSE)  # include lowest and highest end values
+summary(V3)
+levels(V3) <- c("LA","MA","EA")
+summary(V3)
+EAs <- cbind(EAs, V3)
+
+write.csv(file="EAcats.csv", x=EAs)
