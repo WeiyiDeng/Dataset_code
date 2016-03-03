@@ -52,3 +52,7 @@ hippo = Animal("lemon", 5)
 
 hippo.description()
 #lemon.is_edible()
+
+# interactive introduction to programming in Python course videos and materials
+# https://www.reddit.com/r/learnpython/comments/2pohbv/about_courseras_introduction_to_interactive/
+# http://www.douban.com/note/273894010/

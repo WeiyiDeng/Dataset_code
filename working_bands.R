@@ -1,3 +1,5 @@
+# setwd("D:/Program Files/SQLite")
+
 library("dplyr")
 library("ggplot2")
 ? dplyr
@@ -120,7 +122,7 @@ WHERE D.ARTIST = newbandlist.ARTIST
 
 startdate <- collect(introdate)
 
-write.table(startdate, "introdate.csv", row.names=F, col.names=F, sep=",")
+write.table(startdate, "introdatej.csv", row.names=F, col.names=F, sep=",")
 
 
 # for computing EA score
@@ -147,3 +149,35 @@ summary(V3)
 EAs <- cbind(EAs, V3)
 
 write.csv(file="EAcats.csv", x=EAs)
+
+# simu friend list from members
+simufriend <- tbl(db,sql("SELECT U.USER, ID_USER, FRIEND, USER_ID as ID_FRIEND
+FROM (select testdt2.USER as USER, USER_ID as ID_USER, FRIEND as FRIEND
+from testdt2, userlist
+where testdt2.USER = userlist.USER) as U, userlist
+WHERE U.FRIEND = userlist.USER
+                           "))
+
+testfriendlist <- collect(simufriend)
+
+testfriends <- testfriendlist[,c(2,4)]
+
+write.table(testfriends, "testfriends.csv", row.names=F, col.names=F, sep=",")
+
+# get active period of bands (start date + end date)
+activebands <- tbl(db,sql("SELECT D.ARTIST, BAND_ID, introdate, endate
+FROM (select ARTIST, min(week_ID) as introdate, max(week_ID) as endate
+from newbandlis
+group by ARTIST) as D, newbandlist
+WHERE D.ARTIST = newbandlist.ARTIST
+                           "))
+
+bandactive <- collect(activebands)
+
+bandactive <- bandactive[,2:4]
+
+write.table(bandactive, "tbands.csv", row.names=F, col.names=F, sep=",")
+
+
+
+
