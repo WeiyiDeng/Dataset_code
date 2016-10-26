@@ -1,0 +1,7 @@
+*
+!*.R
+!*.sql
+!*.py
+!*.Rmd
+!.gitignore
+!*/

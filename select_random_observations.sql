@@ -1,0 +1,6 @@
+SELECT * FROM table ORDER BY RANDOM() LIMIT X
+
+
+
+
+
