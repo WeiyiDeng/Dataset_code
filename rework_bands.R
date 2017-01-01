@@ -1,4 +1,4 @@
-setwd("D:/Program Files/SQLite")
+# setwd("D:/Program Files/SQLite")
 
 library("dplyr")
 library("ggplot2")
@@ -11,6 +11,10 @@ db2 <- src_sqlite("dbas.db")          # link with database db_mod
 db_tba1 <- tbl(db, "adoptobs")          # link with table dataset1
 db_tba2 <- tbl(db2, "modelbandweeks")
 
+## can use paste to perform iterative queries
+# mytry <- paste("select BAND_ID, WEEK, count(*) from adoptobs", "group by BAND_ID, WEEK", sep = " ")
+# mytry
+# adoptweeks <- tbl(db,sql(mytry))
 
 adoptweeks <- tbl(db,sql("select BAND_ID, WEEK, count(*)
 from adoptobs
