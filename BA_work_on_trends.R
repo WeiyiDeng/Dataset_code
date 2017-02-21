@@ -192,6 +192,7 @@ for (i in 2:nrow(listen_trend_full)){
       y <- listen_trend_full[from_ind:(i-1),1]
       if (sum(sum(X))!=0) {
         X <- X[,apply(X,2,sum)!=0]
+        # mod <- lm(log(y+1)~X)
         mod <- lm(y~X)
         R_square <- summary(mod)$r.squared
         r_square_vec <- c(r_square_vec, R_square)
@@ -257,6 +258,51 @@ y
 # which.max(X[,1])
 # X[217,1]
 
+
+# coef_list[[1]]
+coef_list[[1]]["Xtrend_ori",1]
+
+
+# ----------------- test tryCatch -----------------------
+test_list <- list(a = NULL, b = "some_value")
+some_list <- c()
+err <- c()
+for(i in 1:4){
+  obj <- tryCatch({
+    x <- test_list[[i]]
+    x <- ifelse(is.null(x), NA, x)
+  }
+  , error = function(e) {err <<- c(err,e$message)},                        # double arrow allows to change value of a variable two levels above
+  finally = print("sth"))
+  print(obj)
+}
+err
+#------------------ test over ----------------------------
+
+coeff_ori <- c()
+coeff_cat3 <- c()
+coeff_cat35 <- c()
+coeff_lab <- c()
+err <- c()
+warn <- c()
+for (i in 1:length(coef_list)){
+  obj <- tryCatch(
+    {coeff_ori <- c(coeff_ori, coef_list[[i]]["Xtrend_ori",1])
+    coeff_cat3 <- c(coeff_cat3, coef_list[[i]]["Xtrend_cat3",1])
+    coeff_cat35 <- c(coeff_cat35, coef_list[[i]]["Xtrend_cat35",1])
+    coeff_lab <- c(coeff_lab, coef_list[[i]]["Xtrend_lab",1])},
+    error = function(e) {err <<- c(err,e$message)},
+    warnings = function(w) {warn <<- c(warn,w$message)}
+    )
+}
+print(err)
+
+hist(coeff_ori,breaks = 50)
+hist(coeff_cat3,breaks = 50)
+hist(coeff_cat35,breaks = 50)
+hist(coeff_lab,breaks = 50)
+
+# large coeff outliers
 
 ###########################################################
 ###################### adopt vs trends ####################
@@ -327,6 +373,10 @@ all_zeros_band_names <- adopt_trend_full[all_zero_band,6]
 
 rm(list = ls())
 
+# strict adoption definition:
+# if data of user i includes intro date of band j
+# count as adoption
+
 trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/adopt_strict_trends_left_join_full_weeks.csv", header=TRUE, sep=",")
 # listen_trends_left_join_full_weeks.csv aggregated from listenbandweeks; aggregated listens of 24626 users
 # trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/adopt_trends_left_join_full_weeks.csv", header=TRUE, sep=",")
@@ -365,7 +415,8 @@ for (i in 2:nrow(adopt_trend_full)){
       }
       y_lag <- y[(lag+1):length(y)]
       # X_cbind <- cbind(X_trun, X_lags)
-      mod <- lm(y_lag~X_trun + X_lags)
+      # mod <- lm(y_lag~X_trun + X_lags)                      # model with lag(s)
+      mod <- lm(y_lag~X_trun)                                 # turn off lag(s)
       R_square <- summary(mod)$r.squared
       r_square_vec <- c(r_square_vec, R_square)
       y_sum <- c(y_sum, sum(y))
@@ -395,7 +446,7 @@ band_name <- c(band_name, 6046)
 # add the last band to the vector
 
 length(all_zero_band)
-length(less_row_band)
+length(less_row_band)                       # each band has 423 rows, no less row band here
 mean(r_square_vec, na.rm=TRUE)
 
 all_zeros_band_names <- adopt_trend_full[all_zero_band,6]
@@ -428,10 +479,12 @@ r_square_vec[n]
 # band_name[n]
 y
 
+sum(is.na(r_square_vec))                                                 # number of NAs in R squared vector
+# r_square_vec[2543]
 
-##############################################
-############ plot low r_square bands #########
-##############################################
+###############################################
+############ plot low r_square bands ##########
+###############################################
 
 hist(y_sum, breaks = 50)
 plot(y_sum[y_sum < 500],r_square_vec[y_sum < 500])
@@ -451,7 +504,7 @@ b <- c(0, 0.3, 0.6, 1)
 r_square_cut <- cut(r_square_vec, breaks = b)
 table(member_adopt,r_square_cut)
 
-#--------------------------------------------------------------
+#------------------------ plot share of all adoptions vs R squared ----------------------------
 threshold <- 0.05
 sum_member_adopt <- c()
 add_up <- 0
@@ -460,10 +513,15 @@ while (add_up < 1) {
   sum_member_adopt <- c(sum_member_adopt, sum(member_adopt[r_square_vec>add_up & r_square_vec<add_up+threshold], na.rm=TRUE))
   add_up <- add_up+threshold
 }
-plot(cumsum(sum_member_adopt)/sum(sum_member_adopt), type = "h", xlab = "r_square", ylab = "sum_adoptions", xaxt='n')
+plot(cumsum(sum_member_adopt)/sum(sum_member_adopt), type = "h", 
+     xlab = "r_square", ylab = "sum_adoptions", xaxt='n', main = "share of all adoptions vs R squared")
 labels <- seq(threshold,1,threshold)
 axis(1, 1:length(labels), labels)
+#----------------------------------------------------------------------------------------------
 
+#------------------------ plot all low r square big bands -------------------------------------
+trydata2 <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/newbandlist2588.csv", header=TRUE, sep=",")
+new_band_names <- trydata2
 
 for (i in 1:length(low_r_square_big_bands)){
   n <- low_r_square_big_bands[i]
@@ -477,7 +535,7 @@ for (i in 1:length(low_r_square_big_bands)){
   X <- as.matrix(adopt_trend_full[start_week:end_week,2:5])
   y <- adopt_trend_full[start_week:end_week,1]
   
-  plot(X[,1], type="l",col="red",ylim = c(1,100))                           # original
+  plot(X[,1], type="l",col="red",ylim = c(1,100),main=new_band_names[n,2])                           # original
   lines(X[,2], type="l",col="blue")                                         # cat3    arts & entertainment
   lines(X[,3], type="l",col="orange")                                        # cat35   music & audio
   lines(X[,4], type="l",col="yellow")                                       # label
@@ -489,3 +547,13 @@ for (i in 1:length(low_r_square_big_bands)){
   # band_name[n]
   y
 }
+# ---------------------------------------------------------------------------------------------
+
+### check the names of low_r_square_big_bands with seasonal patterns in search trends
+# 961 Hockey
+# 973 Hospitality
+# 981 Houses
+
+### exclude periods with not enough data to estimate
+hist(y_sum[y_sum < 20], breaks = 50)
+sum(y_sum < 20, na.rm = TRUE)

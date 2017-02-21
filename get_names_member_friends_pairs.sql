@@ -1,10 +1,8 @@
-﻿select min(trend_cat3) from adopt_strict_trends_left_join_full_weeks2
-
---select count(*) from gtrends_lab
-
---select min(gtrends) from gtrends_cat3_mod
-
---select count(*) from user_friend_names_model
+﻿SELECT M.USER_ID, M.USER as USER_NAME, M.FRIEND_ID, S2.USER
+FROM (select member_friend_pairs_model.USER_ID, S1.USER, member_friend_pairs_model.FRIEND_ID
+from member_friend_pairs_model, dbaf.userlist S1
+where member_friend_pairs_model.USER_ID = S1.USER_ID) as M, dbaf.userlist S2
+WHERE M.FRIEND_ID = S2.USER_ID
 
 /*
 create table modelbandweeks_joint(USER char, week_ID integer, COUNTmod integer, BAND_ID integer, WEEK_USER integer, WEEK_BAND integer);

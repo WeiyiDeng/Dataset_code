@@ -1,6 +1,4 @@
-﻿--select count(*) from full_weeks_mat
-
---select count(*) from listen_trends_left_join_big
+﻿--select count(*) from listen_trends_left_join_big
 --select max(weeks_vec) from listen_trends_left_join
 /*
 SELECT avg(sth)
@@ -41,6 +39,7 @@ update listen_trends_left_join set trend_cat35 = 0 where trend_cat35 is null;
 update listen_trends_left_join set trend_lab = 0 where trend_lab is null;
 
 */
+
 create table full_weeks_strict_adopt_all_users_2588(BAND_ID integer, WEEK_ID integer, adopt integer);
 insert into full_weeks_strict_adopt_all_users_2588(BAND_ID, WEEK_ID, adopt)
 

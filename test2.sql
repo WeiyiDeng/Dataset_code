@@ -1,0 +1,1 @@
+﻿select count(distinct var2) from mat1
