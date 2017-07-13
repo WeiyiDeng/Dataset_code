@@ -1,5 +1,5 @@
-﻿create table new_friendlist_7623 (MEMBER integer, FRIEND integer);
-insert into new_friendlist_7623 (MEMBER, FRIEND)
+﻿--create table new_friendlist_7623 (MEMBER integer, FRIEND integer);
+--insert into new_friendlist_7623 (MEMBER, FRIEND)
 
 SELECT *
 FROM (select * from friendlist
