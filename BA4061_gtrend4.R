@@ -1,3 +1,5 @@
+rm(list = ls())
+
 setwd("E:/Trans/Transfer from old Toshiba/SQLite")
 
 library("dplyr")
@@ -5,14 +7,14 @@ library("ggplot2")
 library("RSQLite")
 
 db <- src_sqlite("dbaf.db")          # link with database db_mod
-db_tba1 <- tbl(db, "newbandlist")          # link with table dataset1
-db_tba2 <- tbl(db, "small_bands_names")          # link with table dataset1
+db_tba1 <- tbl(db, "newbandsNo4061")          # link with table dataset1
+db_tba2 <- tbl(db, "small_bands_names4061")          # link with table dataset1
 
-take_small_bandlist <- tbl(db,sql("select * from small_bands_names"))
+take_small_bandlist <- tbl(db,sql("select * from small_bands_names4061"))
 small_bandlist <- collect(take_small_bandlist)
 
 # import manually downladed csv from google trends
-trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/FileProcess/bands2588_cat35/4_cat35.csv", 
+trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/FileProcess/bands4061_lab/5_lab.csv", 
                     header=TRUE, sep=",")
 month_trend <- as.numeric(trydata[2:156,1])
 
@@ -64,17 +66,17 @@ matplot(ind, cbind(x,y),type="p",col=c("red","green"))
 
 # export_list.csv produced from export_prob_stop_lists.py from VM
 # get bands in problem and stopped lists
-trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/FileProcess/bands2588_cat35/export_list.csv", header=FALSE, sep=",")
+trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/FileProcess/bands4061_lab/export_list.csv", header=FALSE, sep=",")
 # trydata
 except_list <- as.numeric(trydata)
 except_list
 
-week_trend_mat <- matrix(NA, nrow = 527, ncol = 2588)
-for (i in 1:2588) {
+week_trend_mat <- matrix(NA, nrow = 527, ncol = 4061)
+for (i in 1:4061) {
   if (i %in% except_list){
   } else {
     print(i)
-    path = paste("E:/Trans/Transfer from old Toshiba/FileProcess/bands2588_cat35/", i, "_cat35.csv", sep = "")
+    path = paste("E:/Trans/Transfer from old Toshiba/FileProcess/bands4061_lab/", i, "_lab.csv", sep = "")
     trend_data <- read.csv(file=path, header=TRUE, sep=",")
     month_trend <- trend_data[,2]
     trun_month <- month_trend[8:143]
@@ -84,7 +86,7 @@ for (i in 1:2588) {
     week_trend <- exp(week_trend_trans$y)
     week_gtrend <- week_trend[29:555]
     week_trend_mat[,i] <- week_gtrend
-  }
+    }
 }
 sum(week_trend_mat<0,na.rm=TRUE)
 mean(week_trend_mat, na.rm = TRUE)
@@ -100,7 +102,7 @@ rep(c(1,2,3),each=3)
 # test over
 
 # get the bands not on problem list or stopped list
-x <- 1:2588
+x <- 1:4061
 white_list <- x[!x%in%except_list]
 
 
@@ -127,7 +129,7 @@ bands_num_vec[529]
 gtrends_mat <- cbind(bands_num_vec, weeks_vec, week_trends_vec)
 head(gtrends_mat)
 
-write.csv(file="gtrends_cat35.csv", x=gtrends_mat)
+write.csv(file="gtrends4061_lab.csv", x=gtrends_mat)
 
 # remove first 104 weeks !!!
 gtrends_423 <- cbind(bands_num_vec, weeks_vec-104, week_trends_vec)
@@ -136,13 +138,13 @@ keep_ind <- gtrends_423[,2]>=1
 gtrends_mod <- gtrends_423[keep_ind,]
 head(gtrends_mod)
 
-write.csv(file="gtrends_cat35_423.csv", x=gtrends_mod)
+write.csv(file="gtrends4061_lab_423.csv", x=gtrends_mod)
 
 sum(gtrends_mod[,3]<0)                                     # many interpolated values smaller than 0
 
 # merge listens and trends in sql (change column names in Emeditor) 
 # import merged listens and trends
-trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/listens_vs_trends423_35.csv", header=TRUE, sep=",")
+trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/listens_vs_trends423_lab.csv", header=TRUE, sep=",")
 listen_trend <- trydata[,1:5]
 
 cor(listen_trend[,3],listen_trend[,5])

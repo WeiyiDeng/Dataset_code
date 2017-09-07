@@ -43,7 +43,7 @@ sth
 ### test over
 
 ## 
-trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/listen_trends_left_join_big4061.csv", header=TRUE, sep=",")
+trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/listen_trends_left_join_big6046.csv", header=TRUE, sep=",")
 # trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/listen_trends_left_join.csv", header=TRUE, sep=",")
 listen_trend <- trydata[,-2]                     # remove adopt data for now
 
