@@ -2,7 +2,9 @@
 
 rm(list = ls())
 
-setwd("E:/Trans/Transfer from old Toshiba/SQLite")j
+setwd("E:/Trans/Transfer from old Toshiba/SQLite")
+
+library(MASS)
 
 #j <- 0
 #for (i in 1:100) {
@@ -16,7 +18,7 @@ setwd("E:/Trans/Transfer from old Toshiba/SQLite")j
 # count as adoption
 
 # adopt_strict_trends_left_join_full_weeks2 fixed the trend_cat3 < 0 values
-trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/adopt_strict_trends_left_join_full_weeks2.csv", header=TRUE, sep=",")
+trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/adopt_strict_trends_left_join_full_weeks_4061.csv", header=TRUE, sep=",")
 # listen_trends_left_join_full_weeks.csv aggregated from listenbandweeks; aggregated listens of 24626 users
 # trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/adopt_trends_left_join_full_weeks.csv", header=TRUE, sep=",")
 # trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/listen_trends_left_join.csv", header=TRUE, sep=",")
@@ -39,44 +41,53 @@ cut_row <- c()
 
 from_ind = 1
 past_ind = 1
+# from_ind = 1404784
+# past_ind = 1404784
 k <- 1
 lag <- 0
+empty_bands_count <- 0
 # for (i in 2:1693){
-# for (i in 2:2116){
+# for (i in 1404785:nrow(adopt_trend_full)) {
+  # print(i)
 for (i in 2:nrow(adopt_trend_full)){
   if (adopt_trend_full[past_ind,6] != adopt_trend_full[i,6]){
+    # print('stop here')
     # print(from_ind)
     # print(i-1)
     band_rows <- adopt_trend_full[from_ind:(i-1),]
     # print(dim(band_rows))
     for (j in 1:nrow(band_rows)){
-      if (sum(band_rows[1:j,1])/j>0.1){
-      # if (sum(band_rows[,1])/j>0.1){
+      # if (sum(band_rows[1:j,1])/j>0.05){                
+      if (sum(band_rows[,1])/j>0.1){                     # more then 10% adoptions
         break
       }
     }
-    if (j>20 && j<nrow(band_rows)){
-      band_rows <- band_rows[j:nrow(band_rows),]
+    # print(nrow(band_rows))
+    if (j>20 && j<nrow(band_rows)){                    # large band and more then 10% adoptions
+      # band_rows <- band_rows[j:nrow(band_rows),]       # w: ???     want to include only obs with more than 10% adoption?
       X <- as.matrix(band_rows[,2:5])
       y <- as.matrix(band_rows[,1])
       skip_flag <- 0
-    } else if (j==nrow(band_rows)) {
+    } else if (j==nrow(band_rows)) {                   # large band but less then 10% adoptions
       band_rows <- c()
       X<- c()
       y <- c()
       skip_flag <- 1
-    } else {
+      # print('large band but less then 10% adoptions')
+    } else {                                          # small band but more then 10% adoptions
       skip_flag <- 0
       X <- as.matrix(band_rows[,2:5])
       y <- as.matrix(band_rows[,1])
     }
+    # print(sum(sum(X)))
     # print(skip_flag)
+    # print(dim(band_rows))
     # print(dim(X))
     # print(dim(y))
     # X <- as.matrix(adopt_trend_full[from_ind:(i-1),2:5])
     # y <- adopt_trend_full[from_ind:(i-1),1]
-    if ((sum(sum(X))!=0) && (sum(y)!=0) && (skip_flag != 100)) {
-      X <- X[,apply(X,2,sum)!=0]
+    if ((sum(sum(X))!=0) && (sum(y)!=0) && (skip_flag != 100)) {            # not using skip_flag, include all bands, but values of x and y have been changed by previous steps anyway
+      X <- X[,apply(X,2,sum)!=0]                                            # remove all zero trend columns
       if (class(X)=="matrix"){
         size_X = nrow(X)
         X_trun <- X[(lag+1):size_X,]
@@ -86,7 +97,7 @@ for (i in 2:nrow(adopt_trend_full)){
         num_of_trends <- ncol(X_trun)
         cut_row <- c(cut_row, (423-nrow(X_trun)+1))
         # browser()
-      } else {
+      } else {                                             # for bands with only one trend ! not empty bands !!
         size_X = length(X)
         X_trun <- X[(lag+1):size_X]
         X_lags <- X[1:(size_X-lag)]
@@ -116,8 +127,10 @@ for (i in 2:nrow(adopt_trend_full)){
       avg_cor <- c(avg_cor, cor_trend)
       num_trends <- c(num_trends, num_of_trends)
       k = k+1
-    } else {
+    # } else if ((sum(sum(X))==0) || (sum(y)==0)) {
+    } else {                                              # this is actually for both empty bands and all zero bands, as empty bands with X <- c() also have sum(X)==0 ....
       all_zero_band <- c(all_zero_band, from_ind)
+      if (length(X)==0) {empty_bands_count = empty_bands_count+1}             # this is to count the number of empty bands
       # r_square_vec <- c(r_square_vec, NA)
       y_sum <- c(y_sum, NA)
       avg_cor <- c(avg_cor, NA)
@@ -162,6 +175,10 @@ all_zeros_band_names <- adopt_trend_full[all_zero_band,6]
 sum(!is.na(avg_cor))
 hist(avg_cor, breaks = 50)
 mean(avg_cor, na.rm=TRUE)
+
+print(empty_bands_count)                    # w: almost 1/3 of bands are empty bands by the criteria set above !
+                                            # w: these empty bands use baseline probability instead of trends data for the model, potentially leads to insignificant problem?
+
 # plot(avg_cor, r_square_vec)
 
 # low_r_square_low_avg_cor <- which(avg_cor < 0.2 & r_square_vec<0.2)
@@ -480,10 +497,10 @@ for (j in 1:length(coef_list)){
 max(coeff_mat, na.rm = TRUE)
 min(coeff_mat, na.rm = TRUE)
 
-#  create the full coefficient matrix for all 2588 bands
-coeff_mat_full <- matrix(0,2588,5)
+#  create the full coefficient matrix for all 2588 bands                        
+coeff_mat_full <- matrix(0,4061,5)                                           # w: change here ! 2017 Sep 27
 k <- 1
-for (i in 1:2588){
+for (i in 1:4061){                                                           # w: change here ! 2017 Sep 27
   if (band_name[i]%in%all_zeros_band_names){}
   else {
     coeff_mat_full[i,] <- coeff_mat[k,]
@@ -575,8 +592,8 @@ summary(log_y_hat)
 predict_trend <- cbind(adopt_trend_full$bands_num_vec,adopt_trend_full$weeks_vec,y_hat)
 predict_trend_log <- cbind(adopt_trend_full$bands_num_vec,adopt_trend_full$weeks_vec,log_y_hat)
 
-write.csv(file="predict_trend.csv", x=predict_trend, row.names = FALSE)
-write.csv(file="predict_trend_log.csv", x=predict_trend_log, row.names = FALSE)
+write.csv(file="predict_trend4061.csv", x=predict_trend, row.names = FALSE)
+write.csv(file="predict_trend_log4061.csv", x=predict_trend_log, row.names = FALSE)
 
 ########################################################
 ########################################################

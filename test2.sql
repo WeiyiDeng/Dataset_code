@@ -51,8 +51,11 @@ where FROM_UTS < 1170590400
 --select count(distinct BAND_ID) from bandadoptions => 6046
 --select count(distinct USER_ID) from bandadoptions => 8320
 
-select count(distinct BAND_ID) from adopt_strict_all_users_4061_bands
-
+SELECT count(*) FROM(
+select bands_num_vec, sum(trend_ori + trend_cat3 + trend_cat35 + trend_lab) as V1 from adopt_strict_trends_left_join_full_weeks_4061
+group by bands_num_vec
+)
+WHERE V1 =0
 /*
 create table full_weeks_strict_adopt_all_users_2588(BAND_ID integer, WEEK_ID integer, adopt integer);
 insert into full_weeks_strict_adopt_all_users_2588(BAND_ID, WEEK_ID, adopt)

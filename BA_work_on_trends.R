@@ -43,7 +43,7 @@ sth
 ### test over
 
 ## 
-trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/listen_trends_left_join_big4061.csv", header=TRUE, sep=",")
+trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/listen_trends_left_join_big.csv", header=TRUE, sep=",")
 # trydata <- read.csv(file="E:/Trans/Transfer from old Toshiba/SQLite/listen_trends_left_join.csv", header=TRUE, sep=",")
 listen_trend <- trydata[,-2]                     # remove adopt data for now
 
@@ -63,7 +63,7 @@ for (i in 2:nrow(listen_trend)){
     # print(from_ind)
     # print(i-1)
     if (i-from_ind<30){
-    # if (i-from_ind<5){
+      # if (i-from_ind<5){
       less_row_band <- c(less_row_band, from_ind)
       print(from_ind)
       print(i-1)
@@ -150,30 +150,17 @@ sum(cor_distr==1)
 
 ### create new data matrix
 ###
-# band_names_prep <- rep(band_name, each = 423)
-# band_names_prep[2]
-# band_names_prep[424]
-
-# weeks_prep <- rep(1:423, 2588)
-# weeks_prep[3]
-# weeks_prep[425]
-
-# full_weeks_mat <- cbind(band_names_prep, weeks_prep)
-
-# write.csv(file="full_weeks_mat.csv", x=full_weeks_mat)
-
-# create data matrix for 4061 bands
 band_names_prep <- rep(band_name, each = 423)
 band_names_prep[2]
 band_names_prep[424]
 
-weeks_prep <- rep(1:423, 4061)
+weeks_prep <- rep(1:423, 2588)
 weeks_prep[3]
 weeks_prep[425]
 
 full_weeks_mat <- cbind(band_names_prep, weeks_prep)
 
-write.csv(file="full_weeks_mat4061.csv", x=full_weeks_mat)
+write.csv(file="full_weeks_mat.csv", x=full_weeks_mat)
 
 ##################################################################
 ###################### listen versus trends ######################
@@ -201,20 +188,20 @@ for (i in 2:nrow(listen_trend_full)){
   if (listen_trend_full[past_ind,6] != listen_trend_full[i,6]){
     # print(from_ind)
     # print(i-1)
-      X <- as.matrix(listen_trend_full[from_ind:(i-1),2:5])
-      y <- listen_trend_full[from_ind:(i-1),1]
-      if (sum(sum(X))!=0) {
-        X <- X[,apply(X,2,sum)!=0]
-        # mod <- lm(log(y+1)~X)
-        mod <- lm(y~X)
-        R_square <- summary(mod)$r.squared
-        r_square_vec <- c(r_square_vec, R_square)
-        coef_list[[k]] <- coefficients(summary(mod))
-        k = k+1
-      } else {
-        all_zero_band <- c(all_zero_band, from_ind)
-        r_square_vec <- c(r_square_vec, NA)
-      }
+    X <- as.matrix(listen_trend_full[from_ind:(i-1),2:5])
+    y <- listen_trend_full[from_ind:(i-1),1]
+    if (sum(sum(X))!=0) {
+      X <- X[,apply(X,2,sum)!=0]
+      # mod <- lm(log(y+1)~X)
+      mod <- lm(y~X)
+      R_square <- summary(mod)$r.squared
+      r_square_vec <- c(r_square_vec, R_square)
+      coef_list[[k]] <- coefficients(summary(mod))
+      k = k+1
+    } else {
+      all_zero_band <- c(all_zero_band, from_ind)
+      r_square_vec <- c(r_square_vec, NA)
+    }
     obs_num <- c(obs_num, i-from_ind)
     band_name <- c(band_name, listen_trend_full[past_ind,6])
     from_ind = i
@@ -306,7 +293,7 @@ for (i in 1:length(coef_list)){
     coeff_lab <- c(coeff_lab, coef_list[[i]]["Xtrend_lab",1])},
     error = function(e) {err <<- c(err,e$message)},
     warnings = function(w) {warn <<- c(warn,w$message)}
-    )
+  )
 }
 print(err)
 
