@@ -11,6 +11,10 @@
 --select count(distinct USER) from fbandslisn
 --select count(*) from fbandslisn_band_user_id_order
 
+--select sum(trend_lab) from adopt_lenient_trends_left_join_full_weeks_4061
+select sum(trend_lab) from adopt_strict_trends_left_join_full_weeks_4061
+--where rowid = 4444
+
 --select BAND_ID, (WEEK_ID -104) as WEEK_ID, count(USER_ID) as listen
 --from fbandslisn_band_user_id_order
 --group by BAND_ID, WEEK_ID
@@ -51,11 +55,13 @@ where FROM_UTS < 1170590400
 --select count(distinct BAND_ID) from bandadoptions => 6046
 --select count(distinct USER_ID) from bandadoptions => 8320
 
+/*
 SELECT count(*) FROM(
 select bands_num_vec, sum(trend_ori + trend_cat3 + trend_cat35 + trend_lab) as V1 from adopt_strict_trends_left_join_full_weeks_4061
 group by bands_num_vec
 )
 WHERE V1 =0
+/*
 /*
 create table full_weeks_strict_adopt_all_users_2588(BAND_ID integer, WEEK_ID integer, adopt integer);
 insert into full_weeks_strict_adopt_all_users_2588(BAND_ID, WEEK_ID, adopt)
