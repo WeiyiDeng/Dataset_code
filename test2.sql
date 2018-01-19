@@ -12,7 +12,72 @@
 --select count(*) from fbandslisn_band_user_id_order
 
 --select sum(trend_lab) from adopt_lenient_trends_left_join_full_weeks_4061
-select sum(trend_lab) from adopt_strict_trends_left_join_full_weeks_4061
+/*
+SELECT *
+FROM(select count(*) as num, ARTIST from fbandlis
+group by ARTIST)
+where num<28
+*/
+select count(*) from dt3
+
+/*
+create table neighbourlist_6585(MEMBER integer, NEIGHBOUR integer);
+insert into neighbourlist_6585
+
+select dbaf.userlist.USER_ID as MEMBER, neighbourlist_id.USER_ID as NEIGHBOUR
+from dba.dt3, neighbourlist_id,dbaf.userlist
+where dbaf.userlist.USER = dba.dt3.USER and neighbourlist_id.USER = dba.dt3.NEIGHBOUR
+*/
+/*
+create table bandadoptions_neighbour(USER_ID integer, BAND_ID integer, WEEK_ID integer);
+insert into bandadoptions_neighbour
+
+select USER_ID, BAND_ID, min(WEEK_ID) as WEEK_ID
+from neighbours_full_listen_update_bands_weeks_userid
+group by USER_ID, BAND_ID
+order by USER_ID, BAND_ID
+*/
+/*
+create table neighbours_full_listen_update_bands_weeks_userid(USER_ID integer, BAND_ID integer, WEEK_ID integer, COUNT_mod integer);
+insert into neighbours_full_listen_update_bands_weeks_userid
+
+select * from neighbours_full_listen_bands_weeks_userid
+where USER_ID not in (select USER_ID from neighbourlist_id_to_remove)
+*/
+
+/*
+create table cutbands_min_UTS(ARTIST text, min_UTS integer);
+insert into cutbands_min_UTS
+
+select ARTIST, min(FROM_UTS) as min_UTS
+from cutbands
+group by ARTIST
+*/
+
+/*
+create table neighbourlist_id(USER_ID integer, USER text);
+insert into neighbourlist_id
+
+select (rowid+8320) as neighbourlist_id, USER from neighbourlist
+*/
+
+--select count(distinct USER_ID) from neighbours_full_listen_bands_weeks_userid
+--select count(distinct USER) from fbandslis
+/*
+select count(*) from
+(select USER, ARTIST, min(week_ID) as week
+from fbandslis
+group by USER, ARTIST)  
+*/
+/*
+create table neighbours_full_listen_bands_weeks_userid(USER_ID integer, BAND_ID integer, WEEK_ID integer, COUNT_mod integer);
+insert into neighbours_full_listen_bands_weeks_userid
+
+select USER_ID, BAND_ID, WEEK_ID, count_mod 
+from neighbours_full_listen_bands_weeks, neighbourlist_id_union
+where neighbours_full_listen_bands_weeks.USER = neighbourlist_id_union.USER
+*/
+
 --where rowid = 4444
 
 --select BAND_ID, (WEEK_ID -104) as WEEK_ID, count(USER_ID) as listen
