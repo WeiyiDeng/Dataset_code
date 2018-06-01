@@ -18,7 +18,22 @@ FROM(select count(*) as num, ARTIST from fbandlis
 group by ARTIST)
 where num<28
 */
-select count(*) from dt3
+--select max(BAND_ID) from dt4_band_id6046
+
+/*
+create table listen_neighbours (USER_ID integer, BAND_ID integer, times_listened integer);
+insert into listen_neighbours
+
+SELECT USER_ID, BAND_ID, sum(COUNT_mod) as times_listened
+FROM neighbours_full_listen_update_bands_weeks_userid
+GROUP BY USER_ID, BAND_ID
+ORDER BY USER_ID, BAND_ID
+*/
+
+select count(distinct NEW_AID) from test_nm_artist_id
+
+--select * from member_list_model
+--where USER = 'Sh1fft33'
 
 /*
 create table neighbourlist_6585(MEMBER integer, NEIGHBOUR integer);
