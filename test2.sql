@@ -29,14 +29,13 @@ FROM neighbours_full_listen_update_bands_weeks_userid
 GROUP BY USER_ID, BAND_ID
 ORDER BY USER_ID, BAND_ID
 */
-select count(*) from
-(select USER_ID as old_id, new_id 
-from neighbourlist_id, dba.test_nlist
-where USER = USERS
-union
-select USER_ID as old_id, new_id 
-from dbaf.userlist, dba.test_nlist
-where USER = USERS)
+
+--select count(distinct TRACK_ID) from FID_8849
+
+select count(*) from test_nm_artist_id
+--select max(BAND_ID) from dt4_band_id6046
+
+--select count(*) from newbandlist
 
 --select * from member_list_model
 --where USER = 'Sh1fft33'
