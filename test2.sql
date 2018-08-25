@@ -32,7 +32,22 @@ ORDER BY USER_ID, BAND_ID
 
 --select count(distinct TRACK_ID) from FID_8849
 
-select count(*) from test_nm_artist_id
+--select max(NEW_AID) from test_fm_full_artistID_adopt
+
+--SELECT sum(member)
+--FROM (select * from dt1
+--where NAME in (SELECT USER FROM dt3))
+
+--ARTIST6046_start_week
+
+create table ARTIST6046_start_week(NEW_AID integer, SRART_WEEK integer);
+insert into ARTIST6046_start_week
+
+select NEW_AID, START_WEEK
+from artist_start_week
+where NEW_AID in (SELECT NEW_ID FROM artist_new_old_id_6046) 
+
+
 --select max(BAND_ID) from dt4_band_id6046
 
 --select count(*) from newbandlist
