@@ -1,0 +1,6 @@
+﻿create table dt7_member_plus_friend_neighbour_names_fix_weeks_artist6046_union_week_listens(NEW_AID char, WEEK_ID integer, TOTAL_WEEK_LISTENS integer);
+insert into dt7_member_plus_friend_neighbour_names_fix_weeks_artist6046_union_week_listens
+
+select NEW_AID, WEEK_ID, sum(week_listens) as TOTAL_WEEK_LISTENS
+from dt7_member_plus_friend_neighbour_names_fix_weeks_artist6046_union
+group by NEW_AID, WEEK_ID

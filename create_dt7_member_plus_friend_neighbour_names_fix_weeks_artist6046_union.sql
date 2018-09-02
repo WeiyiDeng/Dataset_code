@@ -1,0 +1,6 @@
+﻿create table dt7_member_plus_friend_neighbour_names_fix_weeks_artist6046_union(NEW_UID char, NEW_AID char, WEEK_ID integer, week_listens integer);
+insert into dt7_member_plus_friend_neighbour_names_fix_weeks_artist6046_union
+
+select * from dt7_member_plus_friend_names_fix_weeks_artist6046_week_listens
+union
+select * from dt7_member_plus_neighbour_names_fix_weeks_artist6046_week_listens

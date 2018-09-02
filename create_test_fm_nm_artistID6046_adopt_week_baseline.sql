@@ -1,0 +1,6 @@
+﻿create table test_fm_nm_artistID6046_adopt_week_baseline(NEW_AID integer, WEEK_ID integer, week_adopts integer);
+insert into test_fm_nm_artistID6046_adopt_week_baseline
+
+select NEW_ID as NEW_AID, WEEK_ID, week_adopts
+from test_fm_nm_artist_adopt_week_baseline, artist_new_old_id_6046
+where test_fm_nm_artist_adopt_week_baseline.ARTIST = artist_new_old_id_6046.ARTIST

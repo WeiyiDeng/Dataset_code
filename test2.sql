@@ -40,13 +40,12 @@ ORDER BY USER_ID, BAND_ID
 
 --ARTIST6046_start_week
 
-create table ARTIST6046_start_week(NEW_AID integer, SRART_WEEK integer);
-insert into ARTIST6046_start_week
+select *
+from artist_new_old_id_6046
+where BAND_ID = 6046
 
-select NEW_AID, START_WEEK
-from artist_start_week
-where NEW_AID in (SELECT NEW_ID FROM artist_new_old_id_6046) 
-
+--select max(NEW_AID)
+--from test_fm_nm_artist_adopt
 
 --select max(BAND_ID) from dt4_band_id6046
 
