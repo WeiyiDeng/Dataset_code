@@ -7,6 +7,36 @@
 --from filterlis_weekid
 --group by USER, ARTIST
 
+select count(*) from dt5
+
+--select rowid as USERS_ID from ALL_USERS
+
+/*
+create table POP_counts(count_users integer, count_listens integer, BAND_ID char, week_ID char);
+insert into POP_counts
+
+select count(USERS) as count_users, sum(count_mod) as count_listens, BAND_ID, week_ID
+from temp_dt7
+group by BAND_ID, week_ID
+*/
+
+--select * from ALL_USERS
+
+
+--select count(distinct USERS_ID) from dt7_all_usersID6046
+
+--select count(distinct TRACK_ID) from dt4_band_id6046
+
+--select count(distinct USER_ID) from neighbours_full_listen_bands_weeks_userid
+
+
+--SELECT count(*) from (select dt3.*, db7.ALL_USERS.rowid as MID
+--from dt3, db7.ALL_USERS
+--where db7.ALL_USERS.USERS = dt3.USER)
+
+--create table ARTIST6046_TRACK_IDS(TRACK_ID char, ARTIST char);
+--insert into ARTIST6046_TRACK_IDS
+
 --select count(distinct BAND_ID) from totallistenb
 --select count(distinct USER) from fbandslisn
 --select count(*) from fbandslisn_band_user_id_order
@@ -30,7 +60,23 @@ GROUP BY USER_ID, BAND_ID
 ORDER BY USER_ID, BAND_ID
 */
 
---select count(distinct TRACK_ID) from FID_8849
+--select count(*) from ARTIST6046_TRACK_IDS_OUDE where BAND_ID = 918
+
+--select count(distinct BAND_ID) from ARTIST6046_TRACK_IDS_OUDE
+
+/*
+SELECT avg(MATCH) FROM dt6 WHERE TRACK_ID_2 in 
+(select TRACK_ID from ARTIST6046_TRACK_IDS_OUDE
+where BAND_ID = 918)
+and TRACK_ID_1 in 
+(select TRACK_ID from ARTIST6046_TRACK_IDS_OUDE
+where BAND_ID = 918)
+*/
+
+--select * from ARTIST6046_TRACK_IDS_OUDE
+--where TRACK_ID = 224145835
+
+--select count(*) from dt5
 
 --select max(NEW_AID) from test_fm_full_artistID_adopt
 
@@ -40,9 +86,54 @@ ORDER BY USER_ID, BAND_ID
 
 --ARTIST6046_start_week
 
-select *
-from artist_new_old_id_6046
-where BAND_ID = 6046
+--select count(*) from nartist
+--where ALBUM = ''
+
+/*
+SELECT count(distinct TAG1)
+FROM(
+select TAG1 from dt5
+union
+select TAG2 from dt5
+union
+select TAG3 from dt5
+union
+select TAG4 from dt5
+union
+select TAG5 from dt5
+union
+select TAG6 from dt5
+union
+select TAG7 from dt5
+union
+select TAG8 from dt5
+union
+select TAG9 from dt5
+union
+select TAG10 from dt5
+union
+select TAG11 from dt5
+union
+select TAG12 from dt5
+union
+select TAG13 from dt5
+union
+select TAG14 from dt5
+union
+select TAG15 from dt5
+union
+select TAG16 from dt5
+union
+select TAG17 from dt5
+union
+select TAG18 from dt5
+union
+select TAG19 from dt5
+union
+select TAG20 from dt5
+)
+*/
+--769958
 
 --select max(NEW_AID)
 --from test_fm_nm_artist_adopt
