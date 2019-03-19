@@ -7,7 +7,19 @@
 --from filterlis_weekid
 --group by USER, ARTIST
 
-select count(*) from dt5
+select count(*) from dt7 
+where from_UTS > 1358078400
+
+--select count(*) from dt1
+--where name in (select friend from dt2) and date(REGISTERED)<date('2009-01-01')
+
+/*
+select COUNTRY, count(*) FROM 
+(select * from dt1
+where name in (select friend from dt2) and date(REGISTERED)<date('2009-01-01'))
+GROUP BY COUNTRY
+ORDER BY COUNTRY
+*/
 
 --select rowid as USERS_ID from ALL_USERS
 
